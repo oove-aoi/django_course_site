@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block body %}
+<div>
+	<h1>Title:{{ post.title }} 分類:{{ post.get_classification_display }}</h1>
+	<!-- get_FOO_display 用在讓使用了choice的字段回傳時可出現人類可判讀的字詞-->
+	<h2>Poster:{{ post.poster }}</h2>
+	<img src="{{ post.image.url }}" alt="{{ post.title }}">
+	<p>{{ post.context }}</p>
+	<p>{{ viewer_count }}</p>
+	<span>post time:
+		{{ post.post_time|date:"Y" }}-{{ post.post_time|date:"m" }}-{{ post.post_time|date:"d" }},
+		{{ post.post_time|date:"h" }}:{{ post.post_time|date:"m" }}:{{ post.post_time|date:"s" }}
+	</span>
+</div>
+{% if post.poster == user %}
+<div class="poster-CD-area">
+	<ul>
+		<li>
+			<a href="{% url 'update-post' user_id=user.id slug=post.slug %}">更新內容</a>
+		</li>
+		<li>
+			<a href="{% url 'delete-post' user_id=user.id slug=post.slug %}">刪除此文</a>
+		</li>
+	</ul>
+</div>
+{% endif %}
+
+<div class="comment-area">
+	{% if comments %}
+	<h4>All Comment</h4>
+		<ul class="">
+			{% for comment in comments %}
+				<li>{{ comment.user }} {{ comment.comment_text }}</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>還沒有任何評論</p>
+	{% endif %}
+	<h5>新增你的評論</h5>
+	<form method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<table>
+			<tr>
+				<td>{{ comment_form }}</td>
+			</tr>
+		</table>
+		<button type="submit">提交</button>
+	</form>
+
+</div>
+
+
+{% endblock %}
