@@ -19,10 +19,22 @@ def index(request):
 	post_views_count = Post.objects.annotate(viewer_count=Count('viewersip')).order_by("-viewer_count")
 	top_five_of_viewscount = post_views_count[:5]
 	
+	classification = Post.post_class
+
 	return render(request, "posts/index.html",{
 		"postlist_viewercount": top_five_of_viewscount,
-
+		"classification": classification,
 	})
+
+def classlist(request):
+	selected_classification = request.GET.get("classification", None)
+
+
+	return render(request, 'posts/classification_list_page.html', {
+		"selected_classification": selected_classification,
+	})
+
+
 
 #user相關
 def register(request):
